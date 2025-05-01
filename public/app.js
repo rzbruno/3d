@@ -11,34 +11,19 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Create container (large transparent box)
-const containerSize = 15;
-const containerGeometry = new THREE.BoxGeometry(containerSize, containerSize, containerSize);
-const containerMaterial = new THREE.MeshBasicMaterial({ 
-    color: 0xcccccc,
-    wireframe: true,
-    transparent: true,
-    opacity: 0.3
-});
-const container = new THREE.Mesh(containerGeometry, containerMaterial);
-scene.add(container);
-
-// Create 6 colored boxes inside container
-const boxSize = 2;
-const boxGeometry = new THREE.BoxGeometry(boxSize, boxSize, boxSize);
-const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff];
-const positions = [
-    [-4, 0, 0], [4, 0, 0],
-    [0, -4, 0], [0, 4, 0],
-    [0, 0, -4], [0, 0, 4]
-];
-
-positions.forEach((pos, i) => {
-    const material = new THREE.MeshBasicMaterial({ color: colors[i] });
-    const box = new THREE.Mesh(boxGeometry, material);
-    box.position.set(pos[0], pos[1], pos[2]);
-    scene.add(box);
-});
+// Load JSON data and create scene
+fetch('data.json')
+  .then(response => response.json())
+  .then(data => {
+    data.forEach(item => {
+        const boxGeometry = new THREE.BoxGeometry(item.w, item.h, item.d);
+        const color = `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`
+        const material = new THREE.MeshBasicMaterial({ color: color });
+        const box = new THREE.Mesh(boxGeometry, material);
+        box.position.set(item.x, item.y, item.z);
+        scene.add(box);
+    })
+  })
 
 // Initialize OrbitControls - THIS WILL NOW WORK
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
