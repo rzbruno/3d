@@ -20,12 +20,16 @@ fetch('data.json')
         const color = `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`
         const material = new THREE.MeshBasicMaterial({ color: color });
         const box = new THREE.Mesh(boxGeometry, material);
-        box.position.set(item.x, item.y, item.z);
+        box.position.set(
+          item.x + (item.w*0.5), //x, w
+          item.z + (item.h*0.5), //y, h
+          item.y + (item.d*0.5)  //z, d
+        );
         scene.add(box);
     })
   })
 
-// Initialize OrbitControls - THIS WILL NOW WORK
+// Initialize OrbitControls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
